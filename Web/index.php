@@ -25,6 +25,7 @@
                 <th>Nome</th>
                 <th>População</th>
                 <th>Idioma</th>
+                <th>Funções</th>
             </tr>
             <?php
                 $sql = "SELECT * FROM tb_pais";
@@ -37,8 +38,8 @@
                                 <td>".$row['populacao']."</td>
                                 <td>".$row['idioma_principal']."</td>
                                 <td>
-                                    <a href='editar_pais.php?id=".$row['id_pais']."' class='btn editar'>Editar</a>
-                                    <a href='excluir_pais.php?id=".$row['id_pais']."' class='btn excluir'>Excluir</a>
+                                    <a href='backend/editar_pais.php?id_pais=".$row['id_pais']."' class='btn editar'>Editar</a>
+                                    <a href='backend/excluir_pais.php?id_pais=".$row['id_pais']."' class='btn excluir'>Excluir</a>
                                 </td>
                               </tr>";
                     }
@@ -54,6 +55,7 @@
                 <th>País</th>
                 <th>Cidade</th>
                 <th>População</th>
+                <th>Funções</th>
             </tr>
             <?php
                 $sql = "SELECT id_cidade, p.nome_oficial AS pais, c.nome_oficial AS cidade, c.populacao 
@@ -67,8 +69,8 @@
                                 <td>".$row['cidade']."</td>
                                 <td>".$row['populacao']."</td>
                                 <td>
-                                    <a href='editar_cidade.php?id=".$row['id_cidade']."' class='btn editar'>Editar</a>
-                                    <a href='backend/excluir_cidade.php?id=".$row['id_cidade']."' class='btn excluir'>Excluir</a>
+                                    <a href='backend/editar_cidade.php?id_cidade=".$row['id_cidade']."' class='btn editar'>Editar</a>
+                                    <a href='backend/excluir_cidade.php?id_cidade=".$row['id_cidade']."' class='btn excluir'>Excluir</a>
                                 </td>
                               </tr>";
                     }
