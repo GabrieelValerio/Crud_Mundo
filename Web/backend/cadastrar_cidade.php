@@ -1,7 +1,6 @@
 <?php
 include '../bd.php'; // conexão com o banco
 
-// --- PROCESSAMENTO DO FORMULÁRIO ---
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_pais = $_POST['id_pais'];
     $nome = $_POST['nome'];
@@ -24,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 
-// --- CARREGAR LISTA DE PAÍSES ---
 include '../bd.php';
 $sql_paises = "SELECT id_pais, nome_oficial FROM tb_pais ORDER BY nome_oficial ASC";
 $result_paises = $conn->query($sql_paises);
@@ -90,3 +88,4 @@ $conn->close();
     </div>
 </body>
 </html>
+
