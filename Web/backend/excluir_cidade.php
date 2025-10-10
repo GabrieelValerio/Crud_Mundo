@@ -16,3 +16,5 @@ if (isset($_GET['id_cidade'])) {
     $conn->close();
 }
 ?>
+
+
