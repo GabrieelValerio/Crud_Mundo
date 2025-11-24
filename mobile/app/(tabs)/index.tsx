@@ -75,7 +75,6 @@ export default function ListarCRUD() {
     carregarDados();
   }, []);
 
-  // EXCLUIR CIDADE
   const excluirCidade = async (id: number) => {
     try {
       await supabase.from("tb_cidade").delete().eq("id_cidade", id);
@@ -85,7 +84,6 @@ export default function ListarCRUD() {
     }
   };
 
-  // EXCLUIR PAÍS + TODAS AS CIDADES LIGADAS
   const excluirPais = async (id: number) => {
     try {
       await supabase.from("tb_cidade").delete().eq("id_pais", id);
@@ -98,7 +96,6 @@ export default function ListarCRUD() {
 
   return (
     <ScrollView style={styles.container}>
-
       {/* BOTÕES NO TOPO */}
       <View style={styles.topButtons}>
         <TouchableOpacity
@@ -116,7 +113,7 @@ export default function ListarCRUD() {
         </TouchableOpacity>
       </View>
 
-      {/* Lista de Países */}
+      {/* LISTA DE PAÍSES */}
       <Text style={styles.header}>Países</Text>
 
       {paises.length === 0 ? (
@@ -128,17 +125,30 @@ export default function ListarCRUD() {
             <Text style={styles.info}>Idioma: {item.idioma}</Text>
             <Text style={styles.info}>Continente: {item.continente}</Text>
 
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => excluirPais(item.id_pais)}
-            >
-              <Text style={styles.actionText}>Excluir</Text>
-            </TouchableOpacity>
+            <View style={styles.actionRow}>
+              {/* BOTÃO EDITAR */}
+              <TouchableOpacity
+                style={styles.editBtn}
+                onPress={() =>
+                  router.push(`/editar-pais?id=${item.id_pais}`)
+                }
+              >
+                <Text style={styles.actionText}>Editar</Text>
+              </TouchableOpacity>
+
+              {/* BOTÃO EXCLUIR */}
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() => excluirPais(item.id_pais)}
+              >
+                <Text style={styles.actionText}>Excluir</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))
       )}
 
-      {/* Lista de Cidades */}
+      {/* LISTA DE CIDADES */}
       <Text style={styles.header}>Cidades</Text>
 
       {cidades.length === 0 ? (
@@ -151,12 +161,25 @@ export default function ListarCRUD() {
             </Text>
             <Text style={styles.info}>População: {item.populacao}</Text>
 
-            <TouchableOpacity
-              style={styles.deleteBtn}
-              onPress={() => excluirCidade(item.id_cidade)}
-            >
-              <Text style={styles.actionText}>Excluir</Text>
-            </TouchableOpacity>
+            <View style={styles.actionRow}>
+              {/* BOTÃO EDITAR */}
+              <TouchableOpacity
+                style={styles.editBtn}
+                onPress={() =>
+                  router.push(`/editar-cidade?id=${item.id_cidade}`)
+                }
+              >
+                <Text style={styles.actionText}>Editar</Text>
+              </TouchableOpacity>
+
+              {/* BOTÃO EXCLUIR */}
+              <TouchableOpacity
+                style={styles.deleteBtn}
+                onPress={() => excluirCidade(item.id_cidade)}
+              >
+                <Text style={styles.actionText}>Excluir</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ))
       )}
@@ -202,15 +225,30 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 15,
   },
+
   nome: { fontSize: 18, fontWeight: "700", color: "#133650" },
   info: { color: "#fff", marginTop: 4 },
-  deleteBtn: {
+
+  actionRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 10,
     marginTop: 10,
+  },
+
+  editBtn: {
+    backgroundColor: "#4CAF50",
+    padding: 8,
+    borderRadius: 8,
+  },
+
+  deleteBtn: {
     backgroundColor: "#E53935",
     padding: 8,
     borderRadius: 8,
-    alignSelf: "flex-end",
   },
+
   actionText: { color: "#fff", fontWeight: "600" },
+
   vazio: { color: "#fff", textAlign: "center", marginTop: 10 },
 });
