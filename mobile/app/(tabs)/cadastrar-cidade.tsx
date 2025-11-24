@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Alert,
-  Picker,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import { API_BASE_URL } from "../../src/api/config";
+import { Picker } from "@react-native-picker/picker";
+import { supabase } from "../../src/lib/supabase";
+import { useNavigation } from "expo-router";
 
 export default function CadastrarCidade() {
   const [nome, setNome] = useState("");
@@ -16,17 +17,21 @@ export default function CadastrarCidade() {
   const [paises, setPaises] = useState([]);
   const [idPais, setIdPais] = useState("");
 
-  // Busca os países do banco ao carregar a tela
+  const navigation = useNavigation();
+
   useEffect(() => {
     const carregarPaises = async () => {
-      try {
-        const response = await fetch(`http://192.168.0.255/crud_mundo/Web/backend/listar_paises.php`);
-        const data = await response.json();
-        setPaises(data);
-      } catch (error) {
+      const { data, error } = await supabase.from("tb_pais").select("*");
+
+      if (error) {
+        console.log("Erro ao carregar países:", error);
         Alert.alert("Erro", "Falha ao carregar países");
+        return;
       }
+
+      setPaises(data);
     };
+
     carregarPaises();
   }, []);
 
@@ -36,22 +41,53 @@ export default function CadastrarCidade() {
       return;
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}inserir_cidade.php`, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: `nome=${nome}&populacao=${populacao}&id_pais=${idPais}`,
-      });
+    const cidadeInsert = {
+      cidade: nome, // <- CORREÇÃO IMPORTANTE
+      populacao: Number(populacao),
+      id_pais: parseInt(idPais, 10),
+    };
 
-      const data = await response.text();
-      Alert.alert("Sucesso", data);
-    } catch (error) {
-      Alert.alert("Erro", "Falha ao cadastrar cidade");
+    console.log("Tentando cadastrar cidade:", cidadeInsert);
+
+    try {
+      const { data, error } = await supabase
+        .from("tb_cidade")
+        .insert([cidadeInsert]);
+
+      if (error) {
+        console.log("Erro ao cadastrar cidade:", error);
+        Alert.alert("Erro", "Falha ao cadastrar cidade.");
+        return;
+      }
+
+      Alert.alert("Sucesso", "Cidade cadastrada com sucesso!", [
+        { text: "OK", onPress: () => navigation.goBack() },
+      ]);
+
+      setNome("");
+      setPopulacao("");
+      setIdPais("");
+
+    } catch (err) {
+      console.log("Erro inesperado:", err);
+      Alert.alert("Erro", "Falha inesperada ao cadastrar cidade");
     }
+  };
+
+  const handlePopulacaoChange = (value) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    setPopulacao(numericValue);
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.backButtonText}>← Voltar</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Cadastrar Cidade</Text>
 
       <TextInput
@@ -68,22 +104,23 @@ export default function CadastrarCidade() {
         placeholderTextColor="#ccc"
         keyboardType="numeric"
         value={populacao}
-        onChangeText={setPopulacao}
+        onChangeText={handlePopulacaoChange}
       />
 
       <View style={styles.selectContainer}>
         <Text style={styles.label}>Selecione o País:</Text>
+
         <Picker
           selectedValue={idPais}
           style={styles.select}
-          onValueChange={(itemValue) => setIdPais(itemValue)}
+          onValueChange={(value) => setIdPais(value)}
         >
           <Picker.Item label="Escolha um país..." value="" />
           {paises.map((pais) => (
             <Picker.Item
               key={pais.id_pais}
               label={pais.nome_oficial}
-              value={pais.id_pais}
+              value={pais.id_pais.toString()}
             />
           ))}
         </Picker>
@@ -102,6 +139,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#133650",
     padding: 20,
     justifyContent: "center",
+  },
+  backButton: {
+    marginBottom: 15,
+  },
+  backButtonText: {
+    color: "#EBCE7A",
+    fontSize: 16,
   },
   title: {
     color: "#EBCE7A",
