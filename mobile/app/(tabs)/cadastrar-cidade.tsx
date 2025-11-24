@@ -12,12 +12,12 @@ import { supabase } from "../../src/lib/supabase";
 import { useNavigation } from "expo-router";
 
 export default function CadastrarCidade() {
+  const navigation = useNavigation();
+
   const [nome, setNome] = useState("");
   const [populacao, setPopulacao] = useState("");
   const [paises, setPaises] = useState([]);
   const [idPais, setIdPais] = useState("");
-
-  const navigation = useNavigation();
 
   useEffect(() => {
     const carregarPaises = async () => {
@@ -42,12 +42,10 @@ export default function CadastrarCidade() {
     }
 
     const cidadeInsert = {
-      cidade: nome, // <- CORREÇÃO IMPORTANTE
+      cidade: nome,
       populacao: Number(populacao),
       id_pais: parseInt(idPais, 10),
     };
-
-    console.log("Tentando cadastrar cidade:", cidadeInsert);
 
     try {
       const { data, error } = await supabase
@@ -81,11 +79,13 @@ export default function CadastrarCidade() {
 
   return (
     <View style={styles.container}>
+      
+      {/* BOTÃO VOLTAR IGUAL AO CADASTRAR PAÍS */}
       <TouchableOpacity
         style={styles.backButton}
         onPress={() => navigation.goBack()}
       >
-        <Text style={styles.backButtonText}>← Voltar</Text>
+        <Text style={styles.backButtonText}>Voltar</Text>
       </TouchableOpacity>
 
       <Text style={styles.title}>Cadastrar Cidade</Text>
@@ -140,13 +140,24 @@ const styles = StyleSheet.create({
     padding: 20,
     justifyContent: "center",
   },
+
+  // BOTÃO VOLTAR IGUAL AO DO PAÍS
   backButton: {
-    marginBottom: 15,
+    backgroundColor: "#7A8EEB",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+    alignSelf: "flex-start",
+    position: "absolute",
+    top: 40,
+    left: 20,
   },
   backButtonText: {
-    color: "#EBCE7A",
+    color: "#133650",
+    fontWeight: "700",
     fontSize: 16,
   },
+
   title: {
     color: "#EBCE7A",
     fontSize: 24,
